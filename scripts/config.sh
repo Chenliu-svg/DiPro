@@ -1,0 +1,5 @@
+mimic_iv_csv_dir="/data1/liuc/NIPS_2025/files/mimiciv/2.0"
+mimic_cxr_dir="/data1/liuc/NIPS_2025/files/mimic-cxr-jpg/2.0.0/"
+processed_data_dir="/data1/liuc/DiPro/processed_data_all"
+chest_imagenome_scene_graph="/data1/liuc/scene_graph"
+chest_imagenome_golden_comparison="/data1/liuc/NIPS_2025/files/chest-imagenome/1.0.0/gold_dataset/gold_object_comparison_with_coordinates.txt"

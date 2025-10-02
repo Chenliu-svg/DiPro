@@ -1,0 +1,88 @@
+model:
+  base_learning_rate: 1.0e-05
+  target: models.model.DiPro
+  params:
+    task_name: disease_progression # disease_progression / mortality /length_of_stay
+    label_path: path/containing/task/specific/labels/and/input/cxr/meta/data
+
+    # different loss weights
+    lambda_consistency: 0 
+    lambda_orthogonal: 2.0 
+    lambda_static_order: 0
+    lambda_dynamic_order: 0
+    lambda_CE_loss: 2.0
+
+    # other hyperparameters
+    num_transformer_layers: 1
+    group_num: 32
+    num_fusion_layers: 1
+    d_model: 128
+    dropout_rate: 0.1
+
+    max_epochs: 100 # should be the same as lightning.trainer.max_epochs
+    
+    
+data:
+  target: main.DataModuleFromConfig
+  params:
+    batch_size: 8
+    num_workers: 4
+    wrap: true
+    train: 
+      target: dataset_module.dipro_dataset.DiproDataset
+      params:
+        partition: train
+        task_name: disease_progression # disease_progression / mortality /length_of_stay
+        label_path: path/containing/task/specific/labels/and/input/cxr/meta/data
+        demographic_path: path/to/the/processed/demographic/data
+        ehr_time_series_path: path/to/the/processed/ehr/time/series/data
+        bbox_csv: path/to/the/cxr/bbox/csv/file
+        mimic_cxr_path: path/to/the/mimic/cxr/images
+        cxr_meta_path: path/to/the/mimic/cxr/metadata/csv/file
+    validation:
+      target: dataset_module.dipro_dataset.DiproDataset
+      params:
+        partition: val
+        task_name: disease_progression # disease_progression / mortality /length_of_stay
+        label_path: path/containing/task/specific/labels/and/input/cxr/meta/data
+        demographic_path: path/to/the/processed/demographic/data
+        ehr_time_series_path: path/to/the/processed/ehr/time/series/data
+        bbox_csv: path/to/the/cxr/bbox/csv/file
+        mimic_cxr_path: path/to/the/mimic/cxr/images
+        cxr_meta_path: path/to/the/mimic/cxr/metadata/csv/file
+    test:
+      target: dataset_module.dipro_dataset.DiproDataset
+      params:
+        partition: test
+        task_name: disease_progression # disease_progression / mortality /length_of_stay
+        label_path: path/containing/task/specific/labels/and/input/cxr/meta/data
+        demographic_path: path/to/the/processed/demographic/data
+        ehr_time_series_path: path/to/the/processed/ehr/time/series/data
+        bbox_csv: path/to/the/cxr/bbox/csv/file
+        mimic_cxr_path: path/to/the/mimic/cxr/images
+        cxr_meta_path: path/to/the/mimic/cxr/metadata/csv/file
+
+lightning:
+  learning_rate_logger:
+    target: main.LearningRateMonitor
+    params:
+      logging_interval: step
+
+  callbacks:
+    EarlyStopping:
+      target: main.EarlyStopping
+      params:
+        patience: 30
+
+  modelcheckpoint:
+    target: main.ModelCheckpoint
+    params:
+      save_top_k: 1
+      every_n_epochs: 1
+
+
+  trainer:
+    max_epochs: 100
+    deterministic: True
+    num_sanity_val_steps: 0
+    accumulate_grad_batches: 4
