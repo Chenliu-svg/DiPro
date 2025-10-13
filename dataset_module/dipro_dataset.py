@@ -45,9 +45,9 @@ class DiproDataset(Dataset):
         self.original_bbox=pd.read_csv(bbox_csv)
         self.mimic_cxr_path=mimic_cxr_path
 
-        self.mimic_meta=pd.read_csv(cxr_meta_path)[['dicom_id','subject_id','study_id']]
+        # self.mimic_meta=pd.read_csv(cxr_meta_path)[['dicom_id','subject_id','study_id']]
         # set dicom_id as index
-        self.mimic_meta.set_index('dicom_id',inplace=True)
+        # self.mimic_meta.set_index('dicom_id',inplace=True)
 
         self.input_size=input_size
         
@@ -141,9 +141,10 @@ class DiproDataset(Dataset):
         for cxr_dicom_id in input_cxrs_paths:
 
             # get subject_id and study_id
-            subject_id=self.mimic_meta.loc[cxr_dicom_id,'subject_id']
-            study_id=self.mimic_meta.loc[cxr_dicom_id,'study_id']
-            cxr_path = os.path.join(self.mimic_cxr_path, f'p{str(subject_id)[:2]}/p{subject_id}/s{study_id}/{cxr_dicom_id}.jpg')
+            # subject_id=self.mimic_meta.loc[cxr_dicom_id,'subject_id']
+            # study_id=self.mimic_meta.loc[cxr_dicom_id,'study_id']
+            # cxr_path = os.path.join(self.mimic_cxr_path, f'p{str(subject_id)[:2]}/p{subject_id}/s{study_id}/{cxr_dicom_id}.jpg')
+            cxr_path=os.path.join(self.mimic_cxr_path,f'{cxr_dicom_id}.jpg')
             cxr = Image.open(cxr_path).convert('RGB')
 
             bbox_info=self.original_bbox[self.original_bbox['cxr_id']==cxr_dicom_id]

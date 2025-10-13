@@ -29,7 +29,7 @@ def aggregate_metrics(log_dir, metrics, task_name, key_col="mean"):
     """
     collected = {m: [] for m in metrics}
 
-    for dirpath, _, filenames in tqdm(os.walk(log_dir), desc=f"Processing {task_name} folders"):
+    for dirpath, _, filenames in os.walk(log_dir):
         try:
             if task_name == "progression_task" and "total_metrics.csv" in filenames:
                 # progression_task: CSV with metrics in index, "mean" column
@@ -75,24 +75,24 @@ def aggregate_metrics(log_dir, metrics, task_name, key_col="mean"):
 if __name__ == "__main__":
     # progression_task
     aggregate_metrics(
-        log_dir="./logs/progression_task",
-        file_type="csv",
+        log_dir="./logs/test_run/disease_progression",
+    
         metrics=['roc_auc', 'pr_auc_macro', 'accuracy', 'avg_precision_macro', 'avg_recall_macro', 'f1_macro'],
         task_name="progression_task"
     )
 
     # length_of_stay
     aggregate_metrics(
-        log_dir="./logs/los",
-        file_type="json",
+        log_dir="./logs/test_run/length_of_stay",
+        
         metrics=['roc_auc', 'pr_auc_macro', 'accuracy', 'avg_precision_macro', 'avg_recall_macro', 'f1_macro', 'kappa'],
         task_name="length_of_stay"
     )
 
     # mortality
     aggregate_metrics(
-        log_dir="./logs/mortality",
-        file_type="csv",
+        log_dir="./logs/test_run/mortality",
+    
         metrics=['pr_auc', 'roc_auc'],
         task_name="mortality"
     )

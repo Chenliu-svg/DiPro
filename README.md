@@ -1,14 +1,12 @@
 # Multimodal Disease Progression Modeling via Spatiotemporal Disentanglement and Multiscale Alignment
 
-paper, NeurIPS-2025
+paper, NeurIPS-2025 Spotlight
 
-Abstract
+## Abstract
 
 Method
 
 ## Set up environment
-
-
 ```shell
 conda create -n dipro python=3.8 
 conda activate dipro 
@@ -16,7 +14,6 @@ conda activate dipro
 pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html 
 pip install -r requirements.txt 
 pip install taming-transformers-rom1504
-
 ```
 
 ## Data PReparation
@@ -26,35 +23,12 @@ pip install taming-transformers-rom1504
 ```shell
 bash data_preparation.sh
 ```
-START:
-        stay_ids: 76943
-        hadm_ids: 69639
-        subject_ids: 53569
-REMOVE ICU TRANSFERS:
-        stay_ids: 71334
-        hadm_ids: 65112
-        subject_ids: 50764
-REMOVE MULTIPLE STAYS PER ADMIT:
-        stay_ids: 59818
-        hadm_ids: 59818
-        subject_ids: 47477
-REMOVE PATIENTS AGE < 18:
-        stay_ids: 59818
-        hadm_ids: 59818
-        subject_ids: 47477
-
 
 ## Experiments
 
 ```bash
 bash experiments.sh
 ```
-
-[] 测试模型代码客服先
-[] 测试patient=10/30
-[] 3个seed平均值的代码
-[] 写readme
-[] 开源！！！
 
 
 ## Citation

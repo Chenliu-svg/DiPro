@@ -4,7 +4,7 @@ RUN_NAME="test_run"
 task_name='length_of_stay'
 LOGDIR=./logs/$RUN_NAME/$task_name
 
-gpu=1,
+gpu=0,
 batch_size=4
 
 # specify data paths
@@ -12,7 +12,8 @@ label_path=$processed_data_dir/split
 demographic_path=$processed_data_dir/demographic_processed.csv
 ehr_time_series_path=$processed_data_dir/ehr_preprocessed
 bbox_csv=$processed_data_dir/cxr_bbox.csv
-mimic_cxr_path=$mimic_cxr_dir/files
+# mimic_cxr_path=$mimic_cxr_dir/files
+mimic_cxr_path=$mimic_cxr_dir/
 cxr_meta_path=$mimic_cxr_dir/mimic-cxr-2.0.0-metadata.csv
 
 

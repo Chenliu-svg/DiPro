@@ -4,7 +4,7 @@ RUN_NAME="test_run"
 task_name='disease_progression'
 LOGDIR=./logs/$RUN_NAME/$task_name
 
-gpu=1,
+gpu=0,
 batch_size=8
 
 # specify data paths
@@ -12,7 +12,8 @@ label_path=$processed_data_dir/split
 demographic_path=$processed_data_dir/demographic_processed.csv
 ehr_time_series_path=$processed_data_dir/ehr_preprocessed
 bbox_csv=$processed_data_dir/cxr_bbox.csv
-mimic_cxr_path=$mimic_cxr_dir/files
+# mimic_cxr_path=$mimic_cxr_dir/files
+mimic_cxr_path=$mimic_cxr_dir/
 cxr_meta_path=$mimic_cxr_dir/mimic-cxr-2.0.0-metadata.csv
 
 # selected hyperparameters
@@ -47,6 +48,7 @@ for  seed in 23 29 66; do
         model.params.lambda_static_order=$lambda_static_order \
         model.params.lambda_dynamic_order=$lambda_dynamic_order \
         model.params.num_transformer_layers=$num_transformer_layers \
+        model.params.label_path=$label_path \
         data.params.train.params.task_name=$task_name \
         data.params.validation.params.task_name=$task_name \
         data.params.test.params.task_name=$task_name \
@@ -66,7 +68,6 @@ for  seed in 23 29 66; do
         data.params.train.params.cxr_meta_path=$cxr_meta_path \
         data.params.validation.params.cxr_meta_path=$cxr_meta_path \
         data.params.test.params.cxr_meta_path=$cxr_meta_path \
-        model.params.label_path=$label_path \
         data.params.train.params.label_path=$label_path \
         data.params.validation.params.label_path=$label_path \
         data.params.test.params.label_path=$label_path \

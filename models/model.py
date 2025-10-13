@@ -5,6 +5,7 @@ from models.Base_Predictor import Base_Predictor
 from models.Component import LearnableRegionPadding, LongitudinalCXRModel, GroupEmbedding, MultisacleMultimodalFusion
 from mimic_data_extract.mimic3benchmark.constants import SELECTED_REGIONS, TASK_NUM_CLASSES, FILL_VALUE, TASK_OUTPUT_SIZE, IMAGE_CHANNEL, IMAGE_SIZE,  VARIABLE_DIM,NUM_DEMOGRAPHIC_VAR
 
+
 class DiPro(Base_Predictor):
     def __init__(self, 
                 # task related parameters
@@ -43,11 +44,6 @@ class DiPro(Base_Predictor):
         self.output_size=TASK_OUTPUT_SIZE[self.task_name]
         self.num_final_class=TASK_NUM_CLASSES[self.task_name]
 
-        # learnable padding for missing regions
-        num_selected_region=len(SELECTED_REGIONS)
-        self.learnable_pad=LearnableRegionPadding((num_selected_region,IMAGE_CHANNEL, IMAGE_SIZE, IMAGE_SIZE))
-
-       
         # The STD and PAE modules handling the longitudinal CXRs
         if self.task_name=='disease_progression':
             self.long_cxr_encoder = LongitudinalCXRModel(loss_ls=self.loss, device=self.device, feature_size=d_model, dropout_rate=dropout_rate, freeze_backbone=freeze_backbone)
@@ -84,7 +80,10 @@ class DiPro(Base_Predictor):
             nn.Linear(d_model, self.output_size)
         ))
 
-    
+        # learnable padding for missing regions
+        num_selected_region=len(SELECTED_REGIONS)
+        self.learnable_pad=LearnableRegionPadding((num_selected_region,IMAGE_CHANNEL, IMAGE_SIZE, IMAGE_SIZE))
+
         if ckpt_path is not None:
             self.init_from_ckpt(ckpt_path)
 

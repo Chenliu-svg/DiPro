@@ -160,7 +160,7 @@ class Base_Predictor(pl.LightningModule):
        
         all_preds = torch.cat([x['preds'] for x in outputs])
        
-        if self.task_name in ['mortality','length_of_stay']:
+        if self.task_name =='mortality':
             all_preds=all_preds.squeeze(1).squeeze(1)
             roc_auc, pr_auc = self.calculate_binary_metrics(all_preds, all_target)
             self.log('test/roc_auc', roc_auc, prog_bar=True, on_epoch=True)
@@ -184,7 +184,7 @@ class Base_Predictor(pl.LightningModule):
             df_metrics.to_csv(os.path.join(logdir,'total_metrics.csv'))
             
         else: 
-            assert self.task_name in ['los']
+            assert self.task_name =='length_of_stay'
             all_preds=all_preds.squeeze(1).cpu()
             all_target=all_target.cpu()
             final_metrics=self.calculate_multiclass_for_one_class(all_preds, all_target)

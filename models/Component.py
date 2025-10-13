@@ -534,3 +534,44 @@ class GroupEmbedding(nn.Module):
         
         return output
 
+#  From CheXRelFormer
+class ConvolutionalDifferenceCNN(nn.Module):
+    def __init__(self, num_classes=3, embed_dim=1024):
+        super(ConvolutionalDifferenceCNN, self).__init__()
+        self.in_channels = 3
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.embedding_dim = embed_dim
+        
+        self.conv1 = nn.Conv2d(self.in_channels, 1024, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(1024, 2048, kernel_size=3, padding=1)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.diff = nn.Conv2d(16*self.embedding_dim, 2*self.embedding_dim, kernel_size=1)
+        self.fc = nn.Linear(2*self.embedding_dim, num_classes)
+        
+    def forward(self, x1, x2):
+        x1 = self.conv1(x1)
+        x1 = self.relu(x1)
+        x1 = self.maxpool(x1)        
+        x1 = self.conv2(x1)
+        x1 = self.relu(x1)
+        x1 = self.maxpool(x1)   
+        x2 = self.conv1(x2)
+        x2 = self.relu(x2)
+        x2 = self.maxpool(x2)  
+        x2 = self.conv2(x2)
+        x2 = self.relu(x2)
+        x2 = self.maxpool(x2)
+        
+        
+        x_diff = self.diff(torch.cat((x1, x2), 1))
+        x = self.global_avg_pool(x_diff)
+        x = x.view(x.size(0), -1)   
+        x = self.fc(x)
+        
+        return x
+    
+model =ConvolutionalDifferenceCNN()
+# Count the number of parameters
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Total number of parameters: {total_params}")
