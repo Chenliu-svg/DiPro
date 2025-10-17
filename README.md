@@ -6,7 +6,7 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.9.1+-ee4c2c.svg)
 ![NeurIPS](https://img.shields.io/badge/NeurIPS-2025%20Spotlight-FFD700.svg)
 
-> **Official Implementation of [DiPro (NeurIPS 2025 Spotlight)](https://arxiv.org/abs/2510.11112)**  
+> **Official Implementation of [DiPro (NeurIPS 2025 Spotlight, acceptance rate 3.1%)](https://arxiv.org/abs/2510.11112)**  
 > _A framework for modeling disease progression from multimodal, longitudinal EHR and CXR._
 
 ---
@@ -135,7 +135,7 @@ If you find this repository useful, please consider citing:
 @article{liu2025multimodal,
   title   = {Multimodal Disease Progression Modeling via Spatiotemporal Disentanglement and Multiscale Alignment},
   author  = {Liu, Chen and Yao, Wenfang and Yin, Kejing and Cheung, William K and Qin, Jing},
-  journal = {arXiv preprint arXiv:2510.11112},
+  journal={Advances in Neural Information Processing Systems},
   year    = {2025}
 }
 ```
