@@ -1,55 +1,150 @@
 # Multimodal Disease Progression Modeling via Spatiotemporal Disentanglement and Multiscale Alignment
 
-paper, NeurIPS-2025 Spotlight
+[![arXiv](https://img.shields.io/badge/arXiv-2510.11112-b31b1b.svg)](https://arxiv.org/abs/2510.11112)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-1.9.1+-ee4c2c.svg)
+![NeurIPS](https://img.shields.io/badge/NeurIPS-2025%20Spotlight-FFD700.svg)
 
-## Abstract
+> **Official Implementation of [DiPro (NeurIPS 2025 Spotlight)](https://arxiv.org/abs/2510.11112)**  
+> _A framework for modeling disease progression from multimodal, longitudinal EHR and CXR._
 
-Method
+---
 
-## Set up environment
-```shell
-conda create -n dipro python=3.8 
-conda activate dipro 
-# CUDA 11.1 
-pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html 
-pip install -r requirements.txt 
-pip install taming-transformers-rom1504
-```
+## 📖 Abstract
 
-## Data PReparation
+Longitudinal multimodal data — such as **electronic health records (EHR)** and **sequential chest X-rays (CXRs)** — are critical for modeling disease progression but remain underutilized due to two challenges:  
+1. **Redundancy** in consecutive CXRs, where static anatomical structures overshadow dynamic pathological changes.  
+2. **Temporal misalignment** between irregular imaging and continuous EHR data.  
 
-1. set the config file
+We propose **DiPro**, a novel framework addressing these issues through **region-aware disentanglement** and **multiscale temporal alignment**.  
 
-```shell
-bash data_preparation.sh
-```
+- 🧩 **Disentanglement**: Separates static (anatomy) and dynamic (disease) CXR features to highlight progression-relevant changes.  
+- 🧬 **Multiscale alignment**: Integrates dynamic imaging and asynchronous EHR signals at both local (interval-level) and global (sequence-level) timescales.  
 
-## Experiments
+Extensive experiments on the **MIMIC-CXR + EHR** dataset demonstrate that DiPro effectively captures temporal clinical dynamics and achieves state-of-the-art performance on both disease progression identification and general ICU prediction tasks.
+
+---
+
+## 🚀 Overview of DiPro
+
+![Overview of DiPro](./figures/dipro.png)
+
+**🌟 Framework Highlights:**
+1. **🧩 Spatiotemporal Disentanglement (STD)**  
+   Separates dynamic pathological features from static anatomical structures across time.  
+
+2. **🔄 Progression-Aware Enhancement (PAE)**  
+   Improves understanding of progression direction by reversing CXR pairs — enforcing reversed dynamics while keeping static consistency.  
+
+3. **🔗 Multiscale Multimodal Fusion (MMF)**  
+   Aligns CXR features with asynchronously sampled EHR data at both interval and sequence levels, enabling robust multimodal prediction across tasks such as:
+   - Disease progression identification  
+   - Length-of-stay prediction  
+   - In-hospital mortality classification  
+
+---
+
+## ⚙️ Environment Setup
 
 ```bash
-bash experiments.sh
+# 1️⃣ Create and activate environment
+conda create -n dipro python=3.8
+conda activate dipro
+
+# 2️⃣ Install PyTorch (CUDA 11.1)
+pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+
+# 3️⃣ Install dependencies
+pip install -r requirements.txt
+pip install taming-transformers-rom1504
+```
+## 🧾 Data Preparation
+1. Download the [MIMIC-CXR-JPG (v2.0.0)](https://physionet.org/content/mimic-cxr-jpg/2.0.0/) for longitudinal CXR,  [MIMIC-IV (v2.0)](https://physionet.org/content/mimiciv/2.0/) for EHR and [Chest-ImaGenome (v1.0.0)](https://physionet.org/content/chest-imagenome/1.0.0/) for CXR anatomical bounding box, disease progression labels.
+2. Specify dataset and file paths in [`scripts/data_source.sh`](scripts/data_source.sh).
+
+3. Prepare processed inputs:
+   ```bash
+   bash scripts/data_preparation.sh
+   ```
+
+4. After running the data preparation scripts, your `$processed_data_dir` will have the following directory structure:
+
+    ```bash
+    $processed_data_dir
+    ├── disease_progressions/      # Organized by disease; each folder contains CXR pairs representing disease progression extracted from Chest-ImaGenome
+    ├── original_ehr/              # Raw EHR data, organized per patient (patient_id) and per hospital stay (stay_id)
+    ├── ehr_preprocessed/          # Preprocessed EHR data (resampled, imputed, and normalized)
+    ├── split/                     # Train, validation, and test splits for each task, including the extracted labels
+    ├── cxr_bbox.csv               # Bounding box coordinates for each CXR anatomical region
+    └── demographic_processed.csv  # Preprocessed demographic data (discretized and normalized)
+    ```
+
+    > ℹ️ Note: Other intermediate files required for generating the final input data are also stored in this directory. Details on how these files are created can be found in the corresponding implementation scripts.
+
+## 🧪 Experiments
+
+### ✅ Test with Pretrained Checkpoints
+
+Download pretrained models from [🤗 Hugging Face: DiPro_model](https://huggingface.co/Chenhihihi/DiPro_model).  
+Then set paths in `scripts/data_source.sh` and run:
+
+```bash
+task_name=disease_progression   # [disease_progression, mortality, length_of_stay]
+DiPro_model_dir=~/DiPro_model   # path to the downloaded model
+Run_name=test
+gpu=0
+bash scripts/test.sh $task_name $DiPro_model_dir $Run_name $gpu
 ```
 
+Results will be reported as **mean ± std** across three random seeds.
 
-## Citation
+---
 
-If you found this repository useful, please consider cite our paper:
+### 🏋️‍♂️ Train and Evaluate from Scratch
 
-> 
+To train DiPro on three random seeds and report averaged results:
 
-## Acknowledgements
+```bash
+task_name=disease_progression   # or mortality / length_of_stay
+Run_name=train_from_scratch
+gpu=0
+bash scripts/experiment.sh $task_name $Run_name $gpu
+```
 
-We would like to acknowledge the following open-source projects that were used in our work:
+Logs and checkpoints are saved under:
 
-- 
-- 
+```bash
+./logs/$Run_name/$task_name/[timestamp]_seed$seed/
+```
 
+Each run contains:
+- `total_metrics.csv/json` — evaluation metrics  
+- `checkpoints/` — model weights  
 
-/data1/liuc/NIPS_2025/files/mimiciv/Processed_EHR_DDL/10003400/New_episode34577403_timeseries.csv
-/data1/liuc/DiPro/processed_data/ehr_subjects_new/10003400/New_episode34577403_timeseries.csv
-  1%|▋                                                                                             | 474/59818 [00:01<03:57, 249.43it/s]/data1/liuc/NIPS_2025/files/mimiciv/Processed_EHR_DDL/10089085/New_episode36182571_timeseries.csv
-/data1/liuc/DiPro/processed_data/ehr_subjects_new/10089085/New_episode36182571_timeseries.csv
-  1%|█▎                                                                                            | 810/59818 [00:03<03:51, 255.40it/s]/data1/liuc/NIPS_2025/files/mimiciv/Processed_EHR_DDL/10145540/New_episode36107231_timeseries.csv
-/data1/liuc/DiPro/processed_data/ehr_subjects_new/10145540/New_episode36107231_timeseries.csv
-  1%|█▎                                                                                            | 862/59818 [00:03<03:52, 253.32it/s]/data1/liuc/NIPS_2025/files/mimiciv/Processed_EHR_DDL/10151556/New_episode39814818_timeseries.csv
-/data1/liuc/DiPro/processed_data/ehr_subjects_new/10151556/New_episode39814818_timeseries.csv
+> ⚠️ *Experiments were conducted on an RTX 3090 (24GB) GPU and Intel Xeon Gold 6330 (14 vCPU).* Slight numerical variations may occur when using different hardware(CPU, GUP) or PyTorch/cuDNN versions.
+
+---
+
+## 📚 Citation
+
+If you find this repository useful, please consider citing:
+
+```bibtex
+@article{liu2025multimodal,
+  title   = {Multimodal Disease Progression Modeling via Spatiotemporal Disentanglement and Multiscale Alignment},
+  author  = {Liu, Chen and Yao, Wenfang and Yin, Kejing and Cheung, William K and Qin, Jing},
+  journal = {arXiv preprint arXiv:2510.11112},
+  year    = {2025}
+}
+```
+
+---
+
+## ❤️ Acknowledgements
+
+We gratefully build upon and acknowledge the following open-source projects:
+
+- [**MedFuse**](https://github.com/nyuad-cai/MedFuse) and [**mimic3-benchmarks**](https://github.com/YerevaNN/mimic3-benchmarks/) — EHR extraction & preprocessing codebase  
+- [**SDPL**](https://github.com/zhuye98/SDPL/tree/master) — Chest-ImaGenome preprocessing  
+- [**Latent Diffusion**](https://github.com/CompVis/latent-diffusion) — PyTorch Lightning framework reference  

@@ -174,7 +174,7 @@ def worker_init_fn(_):
 class DataModuleFromConfig(pl.LightningDataModule):
     def __init__(self, batch_size,num_workers=0, train=None, validation=None, test=None, predict=None,
                  wrap=False,  shuffle_test_loader=False, use_worker_init_fn=False,
-                 shuffle_val_dataloader=False):
+                 shuffle_val_dataloader=False, test_mode=False):
         super().__init__()
         self.batch_size = batch_size
         self.dataset_configs = dict()
@@ -183,10 +183,10 @@ class DataModuleFromConfig(pl.LightningDataModule):
         self.use_worker_init_fn = use_worker_init_fn
         
         self.collate_fn=CollateFunc(dim=0)
-        if train is not None:
+        if (train is not None) and (not test_mode):
             self.dataset_configs["train"] = train
             self.train_dataloader = self._train_dataloader
-        if validation is not None:
+        if (validation is not None) and (not test_mode):
             self.dataset_configs["validation"] = validation
             self.val_dataloader = partial(self._val_dataloader, shuffle=shuffle_val_dataloader)
         if test is not None:

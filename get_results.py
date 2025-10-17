@@ -3,36 +3,32 @@ import os
 import pandas as pd
 from tqdm import tqdm
 import warnings
-
-warnings.filterwarnings("ignore")
-
-NUM_SEED = 3  # we run 3 seeds for each task
-
-import json
-import os
-import pandas as pd
-from tqdm import tqdm
-import warnings
+import argparse
 
 warnings.filterwarnings("ignore")
 
 NUM_SEED = 3  # expected number of runs per task
 
+Task_Name_2_Metrics = {
+    "disease_progression": ['avg_precision_macro', 'avg_recall_macro', 'f1_macro',  'pr_auc_macro','roc_auc'],
+    "length_of_stay": ['kappa', 'avg_precision_macro', 'avg_recall_macro', 'f1_macro','roc_auc', 'pr_auc_macro', 'accuracy' ],
+    "mortality": ['pr_auc', 'roc_auc']
+}
 
-def aggregate_metrics(log_dir, metrics, task_name, key_col="mean"):
+def aggregate_metrics(logdir, metrics, task_name, key_col="mean"):
     """
     Parameters:
-        log_dir (str): log directory containing subdirectories for each seed run
+        logdir (str): log directory containing subdirectories for each seed run
         metrics (list): metrics to aggregate
         task_name (str): task name
-        key_col (str): which column in progression_task, default 'mean'
+        key_col (str): which column in disease_progression, default 'mean'
     """
     collected = {m: [] for m in metrics}
 
-    for dirpath, _, filenames in os.walk(log_dir):
+    for dirpath, _, filenames in tqdm(os.walk(logdir), desc=f"Processing {task_name} folders"):
         try:
-            if task_name == "progression_task" and "total_metrics.csv" in filenames:
-                # progression_task: CSV with metrics in index, "mean" column
+            if task_name == "disease_progression" and "total_metrics.csv" in filenames:
+                # disease_progression: CSV with metrics in index, "mean" column
                 csv_path = os.path.join(dirpath, "total_metrics.csv")
                 df = pd.read_csv(csv_path, index_col=0)
                 for m in metrics:
@@ -72,27 +68,28 @@ def aggregate_metrics(log_dir, metrics, task_name, key_col="mean"):
         print(f"{col}: {mean[col]:.4f} ± {std[col]:.4f}")
 
 
+
+
 if __name__ == "__main__":
-    # progression_task
-    aggregate_metrics(
-        log_dir="./logs/test_run/disease_progression",
-    
-        metrics=['roc_auc', 'pr_auc_macro', 'accuracy', 'avg_precision_macro', 'avg_recall_macro', 'f1_macro'],
-        task_name="progression_task"
-    )
 
-    # length_of_stay
-    aggregate_metrics(
-        log_dir="./logs/test_run/length_of_stay",
-        
-        metrics=['roc_auc', 'pr_auc_macro', 'accuracy', 'avg_precision_macro', 'avg_recall_macro', 'f1_macro', 'kappa'],
-        task_name="length_of_stay"
+    # using argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--logdir",
+        type=str,
+        required=True,
+        help="log directory containing subdirectories for each seed run",
     )
+    parser.add_argument(
+        "--task_name",
+        type=str,
+        required=True,
+        choices=["disease_progression", "length_of_stay", "mortality", "all"],
+        help="task name",
+    )
+    args = parser.parse_args()
+    logdir = args.logdir
+    task_name = args.task_name
 
-    # mortality
-    aggregate_metrics(
-        log_dir="./logs/test_run/mortality",
+    aggregate_metrics(logdir, Task_Name_2_Metrics[task_name], task_name)
     
-        metrics=['pr_auc', 'roc_auc'],
-        task_name="mortality"
-    )

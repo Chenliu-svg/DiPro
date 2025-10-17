@@ -1,34 +1,63 @@
 source scripts/config.sh
 
-RUN_NAME="test_run"
-task_name='mortality'
-LOGDIR=./logs/$RUN_NAME/$task_name
-
-gpu=0,
-batch_size=4
+task_name=$1
+Run_name=$2
+LOGDIR=./logs/$Run_name/$task_name
+gpu=$3, # Please do not delete the comma
 
 # specify data paths
 label_path=$processed_data_dir/split
 demographic_path=$processed_data_dir/demographic_processed.csv
 ehr_time_series_path=$processed_data_dir/ehr_preprocessed
 bbox_csv=$processed_data_dir/cxr_bbox.csv
-# mimic_cxr_path=$mimic_cxr_dir/files
-mimic_cxr_path=$mimic_cxr_dir/
+mimic_cxr_path=$mimic_cxr_dir/files
 cxr_meta_path=$mimic_cxr_dir/mimic-cxr-2.0.0-metadata.csv
 
-
-lambda_consistency=1.0
-lambda_CE_loss=6.0 
-lambda_static_order=0.5
-lambda_dynamic_order=0.1
-lambda_orthogonal=0.1
-num_transformer_layers=4
-
-
-base_learning_rate=1.0e-05
-d_model=256
-dropout_rate=0.1
-group_num=8
+case $task_name in
+  "length_of_stay")
+    lambda_consistency=0.1
+    lambda_CE_loss=10.0
+    lambda_static_order=0.5
+    lambda_dynamic_order=0.1
+    lambda_orthogonal=0.001
+    base_learning_rate=8.0e-06
+    d_model=128
+    dropout_rate=0.1
+    num_transformer_layers=2
+    batch_size=4
+    ;;
+  
+  "mortality")
+    lambda_consistency=1.0
+    lambda_CE_loss=6.0
+    lambda_static_order=0.5
+    lambda_dynamic_order=0.1
+    lambda_orthogonal=0.1
+    base_learning_rate=1.0e-05
+    d_model=256
+    dropout_rate=0.1
+    num_transformer_layers=4
+    batch_size=4
+    ;;
+  
+  "disease_progression")
+    lambda_consistency=0.0
+    lambda_CE_loss=2.0
+    lambda_static_order=0.5
+    lambda_dynamic_order=2.0
+    lambda_orthogonal=1.0
+    base_learning_rate=5.0e-06
+    d_model=256
+    dropout_rate=0.1
+    num_transformer_layers=2
+    batch_size=8
+    ;;
+  
+  *)
+    echo "Error: Unknown task name '$task_name'"
+    exit 1
+    ;;
+esac
 
 for  seed in 23 29 66; do
     python main.py \
@@ -36,19 +65,19 @@ for  seed in 23 29 66; do
         -t \
         --seed $seed \
         --gpu $gpu\
-        --name $seed \
+        --name seed_$seed \
         --logdir $LOGDIR \
-        model.params.task_name=$task_name \
         model.base_learning_rate=$base_learning_rate \
+        model.params.task_name=$task_name \
         model.params.d_model=$d_model \
         model.params.dropout_rate=$dropout_rate \
-        model.params.group_num=$group_num \
         model.params.lambda_CE_loss=$lambda_CE_loss \
         model.params.lambda_consistency=$lambda_consistency \
         model.params.lambda_orthogonal=$lambda_orthogonal \
         model.params.lambda_static_order=$lambda_static_order \
         model.params.lambda_dynamic_order=$lambda_dynamic_order \
         model.params.num_transformer_layers=$num_transformer_layers \
+        model.params.label_path=$label_path \
         data.params.train.params.task_name=$task_name \
         data.params.validation.params.task_name=$task_name \
         data.params.test.params.task_name=$task_name \
@@ -68,7 +97,6 @@ for  seed in 23 29 66; do
         data.params.train.params.cxr_meta_path=$cxr_meta_path \
         data.params.validation.params.cxr_meta_path=$cxr_meta_path \
         data.params.test.params.cxr_meta_path=$cxr_meta_path \
-        model.params.label_path=$label_path \
         data.params.train.params.label_path=$label_path \
         data.params.validation.params.label_path=$label_path \
         data.params.test.params.label_path=$label_path \
@@ -76,3 +104,4 @@ for  seed in 23 29 66; do
         lightning.trainer.accumulate_grad_batches=4
 
 done
+

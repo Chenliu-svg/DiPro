@@ -11,7 +11,7 @@ echo "Golden Comparison: $chest_imagenome_golden_comparison"
 mimic_cxr_meta=$mimic_cxr_dir/mimic-cxr-2.0.0-metadata.csv
 mimic_cxr_chexpert=$mimic_cxr_dir/mimic-cxr-2.0.0-chexpert.csv
 
-mimic_iv_subjects_dir=$processed_data_dir/original_ehr_code 
+mimic_iv_subjects_dir=$processed_data_dir/original_ehr 
 ehr_preprocessed_dir=$processed_data_dir/ehr_preprocessed
 
 admission_path=$mimic_iv_csv_dir/hosp/admissions.csv
@@ -53,7 +53,7 @@ python -m mimic3benchmark.scripts.process_ImaGenome \
 
 echo "splitting the dataset...."
 python -m mimic3benchmark.scripts.split_train_and_test \
-    --progression_task_label_dir $processed_data_dir/Chest-ImaGenome \
+    --progression_task_label_dir $processed_data_dir/disease_progressions \
     --golden_dir  $chest_imagenome_golden_comparison \
     --all_stay_csv_path $mimic_iv_subjects_dir/all_stays.csv \
     --cxr_stay  $processed_data_dir/cxr_stay.csv \

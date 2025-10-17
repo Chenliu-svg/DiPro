@@ -1,5 +1,5 @@
 """
-1. get all paired cxr disease progression labels
+Get all paired cxr disease progression labels
 """
 import argparse
 import os
@@ -210,7 +210,7 @@ def pair_progression_statistic(neighbor_progression,cxr_stay,save_dir):
         disease_image_pairs=neighbor_progression[neighbor_progression['disease']==disease]
         disease_image_pairs.to_csv(os.path.join(save_path,f'{disease.split("/")[0]}_image_pairs.csv'),index=False)
 
-#  for reproducability
+#  for reproducability (To get the same splits as the paper)
 def apply_order_map(new_csv, order_map_path, keys=['subject_id','study_id','cxr1_dicom_id','cxr2_dicom_id']):
     new_df = pd.read_csv(new_csv)
     order_map = pd.read_csv(order_map_path)
