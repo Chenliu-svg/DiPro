@@ -1,4 +1,4 @@
-source scripts/config.sh
+source scripts/data_source.sh
 
 cd ./mimic_data_extract
 

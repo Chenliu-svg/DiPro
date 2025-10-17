@@ -1,4 +1,4 @@
-source scripts/config.sh
+source scripts/data_source.sh
 
 task_name=$1
 Run_name=$2

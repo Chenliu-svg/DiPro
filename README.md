@@ -65,6 +65,7 @@ pip install taming-transformers-rom1504
 
 3. Prepare processed inputs:
    ```bash
+   cd DiPro/
    bash scripts/data_preparation.sh
    ```
 
@@ -92,8 +93,8 @@ Then set paths in `scripts/data_source.sh` and run:
 ```bash
 task_name=disease_progression   # [disease_progression, mortality, length_of_stay]
 DiPro_model_dir=~/DiPro_model   # path to the downloaded model
-Run_name=test
-gpu=0
+Run_name=test # Assign a name to this run for better experiment tracking and logging
+gpu=0 # Specify the gpu id
 bash scripts/test.sh $task_name $DiPro_model_dir $Run_name $gpu
 ```
 
@@ -107,8 +108,8 @@ To train DiPro on three random seeds and report averaged results:
 
 ```bash
 task_name=disease_progression   # or mortality / length_of_stay
-Run_name=train_from_scratch
-gpu=0
+Run_name=train_from_scratch  # Assign a name to this run for better experiment tracking and logging
+gpu=0 # Specify the gpu id
 bash scripts/experiment.sh $task_name $Run_name $gpu
 ```
 
