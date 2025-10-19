@@ -60,8 +60,10 @@ pip install -r requirements.txt
 pip install taming-transformers-rom1504
 ```
 ## 🧾 Data Preparation
-1. Download the [MIMIC-CXR-JPG (v2.0.0)](https://physionet.org/content/mimic-cxr-jpg/2.0.0/) for longitudinal CXR,  [MIMIC-IV (v2.0)](https://physionet.org/content/mimiciv/2.0/) for EHR and [Chest-ImaGenome (v1.0.0)](https://physionet.org/content/chest-imagenome/1.0.0/) for CXR anatomical bounding box, disease progression labels.
-2. Specify dataset and file paths in [`scripts/data_source.sh`](scripts/data_source.sh).
+1. Download the [MIMIC-CXR-JPG (v2.0.0)](https://physionet.org/content/mimic-cxr-jpg/2.0.0/) for longitudinal CXR,  [MIMIC-IV (v2.0)](https://physionet.org/content/mimiciv/2.0/) for EHR and [Chest-ImaGenome (v1.0.0)](https://physionet.org/content/chest-imagenome/1.0.0/) for CXR anatomical bounding box, disease progression labels. 
+
+2. Define all dataset and file paths in [`scripts/data_source.sh`](scripts/data_source.sh), according to the detailed instructions and examples within the script.
+
 
 3. Prepare processed inputs:
    ```bash

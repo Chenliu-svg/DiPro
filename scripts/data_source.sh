@@ -2,6 +2,7 @@
 ## Set the following paths before running preprocessing or training scripts:
 
 # Directory containing the MIMIC-IV structured EHR CSV files
+# Please unzip the csv files in the mimic-iv
 mimic_iv_csv_dir=/Directory/containing/the/MIMIC-IV/structured/EHR/data/CSV/files/ 
 # e.g., ~/physionet.org/files/mimiciv/2.0
 
@@ -10,6 +11,7 @@ mimic_cxr_dir=/Directory/containing/MIMIC-CXR-JPG/images/
 # e.g., ~/physionet.org/files/mimic-cxr-jpg/2.0.0
 
 # Directory containing Chest ImaGenome scene graph data
+# Please unzip the scene_graph in the chest-imagenome silver_dataset first
 chest_imagenome_scene_graph=/Directory/containing/Chest-ImaGenome/scene_graph/
 # e.g., ~/physionet.org/files/chest-imagenome/1.0.0/silver_dataset/scene_graph
 

@@ -202,7 +202,7 @@ def pair_progression_statistic(neighbor_progression,cxr_stay,save_dir):
     disease_list=['lung opacity','pleural effusion','atelectasis','enlarged cardiac silhouette','pulmonary edema/hazy opacity','consolidation','pneumonia']
     # merge the neighbor_progression with image_pairs_in_stay
     neighbor_progression=neighbor_progression.merge(image_pairs_in_stay,on=['subject_id','cxr1_dicom_id','cxr2_dicom_id'],how='left')
-    save_path=os.path.join(save_dir,'Chest-ImaGenome')
+    save_path=os.path.join(save_dir,'disease_progressions')
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     for disease in disease_list:
