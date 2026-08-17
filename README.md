@@ -1,3 +1,5 @@
+
+
 # Multimodal Disease Progression Modeling via Spatiotemporal Disentanglement and Multiscale Alignment
 
 [![arXiv](https://img.shields.io/badge/arXiv-2510.11112-b31b1b.svg)](https://arxiv.org/abs/2510.11112)
@@ -94,7 +96,7 @@ Then set paths in `scripts/data_source.sh` and run:
 
 ```bash
 task_name=disease_progression   # [disease_progression, mortality, length_of_stay]
-DiPro_model_dir=~/DiPro_model   # path to the downloaded model
+DiPro_model_dir=~/DiPro_model   # path to the downloaded model directory; scripts/test.sh expects $DiPro_model_dir/$task_name/seed_23.ckpt, seed_29.ckpt, seed_66.ckpt
 Run_name=test # Assign a name to this run for better experiment tracking and logging
 gpu=0 # Specify the gpu id
 bash scripts/test.sh $task_name $DiPro_model_dir $Run_name $gpu
@@ -150,4 +152,4 @@ We gratefully build upon and acknowledge the following open-source projects:
 
 - [**MedFuse**](https://github.com/nyuad-cai/MedFuse) and [**mimic3-benchmarks**](https://github.com/YerevaNN/mimic3-benchmarks/) — EHR extraction & preprocessing codebase  
 - [**SDPL**](https://github.com/zhuye98/SDPL/tree/master) — Chest-ImaGenome preprocessing  
-- [**Latent Diffusion**](https://github.com/CompVis/latent-diffusion) — PyTorch Lightning framework reference  
+- [**Latent Diffusion**](https://github.com/CompVis/latent-diffusion) — PyTorch Lightning framework reference
